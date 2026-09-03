@@ -2,6 +2,7 @@
 > The only difference is optional trailing-space settings, described in
 > [What this fork adds](#what-this-fork-adds). Upstream specifies no license, so no
 > usage or redistribution rights are granted here.
+> [中文说明](README.zh-CN.md)。
 
 ## What this fork adds
 
