@@ -17,7 +17,9 @@ extension InputController {
         state.currentPredictions = unified
         CandidateWindow.shared.show(
             candidates: display,
-            literalText: keyHandler.literalText(compositionBuffer: state.compositionBuffer),
+            // Capitalised here too, so the literal slot shows the text that commit will insert.
+            literalText: keyHandler.literalText(compositionBuffer: state.compositionBuffer)
+                .map { state.typingRules.autocapitalize($0) },
             client: client,
         )
     }

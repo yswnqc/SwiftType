@@ -36,6 +36,10 @@ protocol TypingRules: Sendable {
     /// case of the user's typed input onto the suggestion. The `context` parameter is
     /// accepted for protocol extensibility but unused by the default implementation.
     func applyCapitalization(original: String, suggested: String, context: String) -> String
+
+    /// Fixes words a language always capitalises regardless of where they appear, such as
+    /// English "i". Matching is whole-word, so "input" and "iphone" are left alone.
+    func autocapitalize(_ word: String) -> String
 }
 
 extension TypingRules {
@@ -50,5 +54,10 @@ extension TypingRules {
 
     func applyCapitalization(original: String, suggested: String, context _: String) -> String {
         preserveCapitalization(original: original, suggested: suggested)
+    }
+
+    /// Languages with no such words inherit this no-op.
+    func autocapitalize(_ word: String) -> String {
+        word
     }
 }

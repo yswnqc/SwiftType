@@ -34,6 +34,7 @@ extension InputController {
     /// `insertsSpace` overrides the active `TypingRules` when non-nil. The committing keys
     /// pass their own setting through it.
     func commitWord(_ word: String, client: any IMKTextInput, insertsSpace: Bool? = nil) {
+        let word = state.typingRules.autocapitalize(word)
         let appendsSpace = insertsSpace ?? state.typingRules.insertsTrailingSpace
         let committed = appendsSpace ? word + " " : word
         client.insertText(committed, replacementRange: Constants.replacementNotFound)

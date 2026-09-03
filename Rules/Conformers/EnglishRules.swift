@@ -31,4 +31,17 @@ struct EnglishTypingRules: TypingRules, Sendable {
     ///
     /// This set has **4 members**; `TypingRulesEdgeCaseTests.testEnglishSentenceEndingCharsExactCount` locks this in.
     let sentenceEndingChars: Set<Character> = [".", "!", "?", "\u{2026}"]
+
+    /// The first-person pronoun and its contractions, which English capitalises anywhere in
+    /// a sentence. Contractions need their own entries because an apostrophe is a
+    /// `compositionContinuationMark`, so "i'm" arrives as a single word to commit.
+    private static let alwaysCapitalized: [String: String] = [
+        "i": "I", "i'm": "I'm", "i'll": "I'll", "i've": "I've", "i'd": "I'd",
+        "i\u{2019}m": "I\u{2019}m", "i\u{2019}ll": "I\u{2019}ll",
+        "i\u{2019}ve": "I\u{2019}ve", "i\u{2019}d": "I\u{2019}d",
+    ]
+
+    func autocapitalize(_ word: String) -> String {
+        Self.alwaysCapitalized[word.lowercased()] ?? word
+    }
 }
