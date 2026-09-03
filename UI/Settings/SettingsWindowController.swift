@@ -71,6 +71,8 @@ import UniformTypeIdentifiers
     var aboutPane: NSView?
 
     var nextWordPredictionsToggle: NSSwitch?
+    var commitSpacingPopUps: [CommitTrigger: NSPopUpButton] = [:]
+    var hotkeyButton: HotkeyRecorderButton?
 
     var languagesPane: NSView?
     var languageTableView: NSTableView?
@@ -230,11 +232,20 @@ import UniformTypeIdentifiers
             self, selector: #selector(languagesDidChange),
             name: .languagesDidChange, object: nil,
         )
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(commitSpacingDidChange),
+            name: .commitSpacingDidChange, object: nil,
+        )
     }
 
     @objc private func mappingsDidChange() {
         guard window?.isVisible == true else { return }
         reloadTable()
+    }
+
+    @objc private func commitSpacingDidChange() {
+        guard window?.isVisible == true, generalPane != nil else { return }
+        syncGeneralControls()
     }
 
     @objc private func languagesDidChange() {

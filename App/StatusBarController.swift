@@ -2,6 +2,7 @@ import AppKit
 
 @MainActor final class StatusBarController: NSObject {
     private let statusItem: NSStatusItem
+    private var trailingSpaceItem: NSMenuItem?
 
     override init() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -25,12 +26,21 @@ import AppKit
             name: NSTextInputContext.keyboardSelectionDidChangeNotification,
             object: nil,
         )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateStatusTitle),
+            name: .commitSpacingDidChange,
+            object: nil,
+        )
     }
 
     // MARK: - Status Title
 
+    /// The language code, with a dot appended while commits are suppressing the trailing
+    /// space — the only at-a-glance indicator that the shortcut is engaged.
     @objc private func updateStatusTitle() {
-        statusItem.button?.title = LanguageManager.shared.effectiveBaseCode.uppercased()
+        let code = LanguageManager.shared.effectiveBaseCode.uppercased()
+        statusItem.button?.title = SettingsManager.shared.isTrailingSpaceSuppressed ? code + "·" : code
     }
 
     // MARK: - Menu
@@ -41,10 +51,21 @@ import AppKit
 
         menu.addItem(.separator())
 
+        let spacingItem = NSMenuItem(title: "",
+                                     action: #selector(toggleTrailingSpace),
+                                     keyEquivalent: "")
+        spacingItem.target = self
+        menu.addItem(spacingItem)
+        trailingSpaceItem = spacingItem
+
         let settingsItem = NSMenuItem(title: "Settings", action: #selector(openSettings), keyEquivalent: "")
         settingsItem.target = self
         menu.addItem(settingsItem)
         return menu
+    }
+
+    @objc private func toggleTrailingSpace() {
+        SettingsManager.shared.toggleTrailingSpaceSuppression()
     }
 
     @objc private func openSettings() {
@@ -61,6 +82,14 @@ import AppKit
 
 extension StatusBarController: NSMenuDelegate {
     func menuWillOpen(_ menu: NSMenu) {
+        // The chord is shown in the title rather than as a key equivalent, which would go
+        // stale as soon as the shortcut is reconfigured.
+        let settings = SettingsManager.shared
+        let action = settings.isTrailingSpaceSuppressed
+            ? "Commit With Trailing Space"
+            : "Commit Without Trailing Space"
+        trailingSpaceItem?.title = "\(action)  (\(settings.commitSpacingHotkey.label))"
+
         while let first = menu.items.first, !first.isSeparatorItem {
             menu.removeItem(at: 0)
         }

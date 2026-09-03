@@ -25,13 +25,21 @@ extension InputController {
         cancelPredictions()
     }
 
-    func commitWord(_ word: String, client: any IMKTextInput) {
-        let insertsSpace = state.typingRules.insertsTrailingSpace
-        let committed = insertsSpace ? word + " " : word
+    /// The `commitWord` trailing-space override for `trigger`: `nil` defers to `TypingRules`,
+    /// `false` suppresses the space they would add.
+    func insertsSpace(for trigger: CommitTrigger) -> Bool? {
+        SettingsManager.shared.commitSpacing(for: trigger) == .withoutTrailingSpace ? false : nil
+    }
+
+    /// `insertsSpace` overrides the active `TypingRules` when non-nil. The committing keys
+    /// pass their own setting through it.
+    func commitWord(_ word: String, client: any IMKTextInput, insertsSpace: Bool? = nil) {
+        let appendsSpace = insertsSpace ?? state.typingRules.insertsTrailingSpace
+        let committed = appendsSpace ? word + " " : word
         client.insertText(committed, replacementRange: Constants.replacementNotFound)
         state.appendToContext(committed)
         state.compositionBuffer = ""
-        state.didAutoInsertTrailingSpace = insertsSpace
+        state.didAutoInsertTrailingSpace = appendsSpace
         cancelPredictions()
     }
 
@@ -52,7 +60,7 @@ extension InputController {
             )
 
         Log.inputController.info("Selected candidate \(index + 1, privacy: .public): \(word, privacy: .public) (nextWord=\(self.state.isNextWordMode ? 1 : 0, privacy: .public))")
-        commitWord(word, client: client)
+        commitWord(word, client: client, insertsSpace: insertsSpace(for: .numberKey))
     }
 
     // MARK: - Marked Text

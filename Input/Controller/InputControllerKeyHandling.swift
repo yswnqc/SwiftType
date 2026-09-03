@@ -26,6 +26,19 @@ extension InputController {
         let key = KeyCode(rawValue: event.keyCode)
         let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
 
+        // The configured shortcut toggles the trailing space on the keys that commit
+        // candidates. Checked before the modifier pass-through below so it never reaches
+        // the client. Only the four real modifiers take part in the comparison — Caps Lock
+        // and the function/numeric-pad flags must not break the match.
+        let hotkey = SettingsManager.shared.commitSpacingHotkey
+        if event.keyCode == hotkey.keyCode,
+           modifiers.intersection(Self.hotkeyModifierMask).rawValue == hotkey.modifiers
+        {
+            let spacing = SettingsManager.shared.toggleTrailingSpaceSuppression()
+            Log.inputController.info("Toggled commit spacing: \(spacing.rawValue, privacy: .public)")
+            return true
+        }
+
         // Pass through modifier key combinations (Cmd, Ctrl, Option)
         if !modifiers.isDisjoint(with: Self.modifierMask) {
             commitCompositionBuffer(client: client)
@@ -106,7 +119,7 @@ extension InputController {
 
         // `slotIndex` is the 0-based column of the active grid row.
         if CandidateWindow.shared.isLiteralAt(gridColumn: slotIndex) {
-            commitWord(state.compositionBuffer, client: client)
+            commitWord(state.compositionBuffer, client: client, insertsSpace: insertsSpace(for: .numberKey))
         } else if let predIdx = CandidateWindow.shared.predictionIndexAt(gridColumn: slotIndex) {
             keyHandler.handleCandidateSelection(
                 predictionIndex: predIdx,

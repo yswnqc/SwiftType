@@ -51,6 +51,8 @@ class InputController: IMKInputController {
     // MARK: - Constants
 
     static let modifierMask: NSEvent.ModifierFlags = [.command, .control, .option]
+    /// The modifiers a recorded shortcut may contain.
+    static let hotkeyModifierMask: NSEvent.ModifierFlags = [.command, .control, .option, .shift]
     static let ownBundleIdentifier = Bundle.main.bundleIdentifier
     static let markedTextAttributes: [NSAttributedString.Key: Any] = [
         .underlineStyle: NSUnderlineStyle.single.rawValue,

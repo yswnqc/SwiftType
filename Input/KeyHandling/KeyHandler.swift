@@ -19,8 +19,7 @@ import InputMethodKit
         client: any IMKTextInput,
     ) -> Bool
 
-    /// Handles the Return key when the candidate window is visible.
-    /// Returns `true` if the event was consumed.
+    /// Handles the Return key. Returns `true` if the event was consumed.
     func handleReturn(
         controller: InputController,
         client: any IMKTextInput,

@@ -28,7 +28,7 @@ struct LatinKeyHandler: KeyHandler {
            let selected = CandidateWindow.shared.selectedCandidate()
         {
             Log.inputController.info("Space committed selected candidate: \(selected, privacy: .public)")
-            controller.commitWord(selected, client: client)
+            controller.commitWord(selected, client: client, insertsSpace: controller.insertsSpace(for: .space))
             controller.triggerNextWordPredictions(client: client)
             return true
         }
@@ -39,11 +39,13 @@ struct LatinKeyHandler: KeyHandler {
         }
 
         Log.inputController.info("Space committed literal: \(state.compositionBuffer, privacy: .public)")
-        controller.commitWord(state.compositionBuffer, client: client)
+        controller.commitWord(state.compositionBuffer, client: client, insertsSpace: controller.insertsSpace(for: .space))
         controller.triggerNextWordPredictions(client: client)
         return true
     }
 
+    /// Commits the selected candidate, with or without a trailing space per the
+    /// "Return Key" setting.
     func handleReturn(
         controller: InputController,
         client: any IMKTextInput,
@@ -53,7 +55,9 @@ struct LatinKeyHandler: KeyHandler {
         let word = CandidateWindow.shared.isLiteralSelected
             ? controller.state.compositionBuffer
             : CandidateWindow.shared.selectedCandidate()
-        if let word { controller.commitWord(word, client: client) }
+        guard let word else { return true }
+
+        controller.commitWord(word, client: client, insertsSpace: controller.insertsSpace(for: .returnKey))
         return true
     }
 
