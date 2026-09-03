@@ -1,3 +1,39 @@
+> **Fork notice** — this is a fork of [mgxv/SwiftType](https://github.com/mgxv/SwiftType).
+> The only difference is optional trailing-space settings, described in
+> [What this fork adds](#what-this-fork-adds). Upstream specifies no license, so no
+> usage or redistribution rights are granted here.
+
+## What this fork adds
+
+### 1. Optional trailing space, per key
+
+Committing a candidate normally appends a trailing space. This fork makes it optional —
+`With Trailing Space` (the default) or `Without Trailing Space` — per key:
+
+| Setting | Applies to |
+|---|---|
+| Return Key | Return |
+| Number Keys | 1–7, including the literal slot |
+| Space Key | Space |
+
+hotkey: **⌥+`** (switch space + number keys commit behavior)
+
+Why: in an IDE, a trailing space prevents the autocomplete menu.
+
+### 2. Menu moved into the input source menu
+
+Settings now live in the macOS input source menu. The separate menu bar icon is gone.
+
+### 3. Auto-capitalised "I" (not in the release yet)
+
+English commits `i` as `I`, along with the contractions `i'm`, `i'll`, `i've` and `i'd`.
+
+---
+
+# ⬇️ Below is the original README
+
+---
+
 <div align="center">
   <img src="./Assets.xcassets/AppIcon.appiconset/icon_512x512@2x.png"
        width="150"
