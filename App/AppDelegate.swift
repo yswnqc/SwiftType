@@ -4,7 +4,6 @@ import InputMethodKit
 @MainActor @objc(AppDelegate)
 class AppDelegate: NSObject, NSApplicationDelegate {
     private var server: IMKServer!
-    private var statusBarController: StatusBarController!
     private var inputSourceSwitcher: InputSourceSwitcher?
     func applicationDidFinishLaunching(_: Notification) {
         Log.appDelegate.info("applicationDidFinishLaunching called")
@@ -25,8 +24,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         server = IMKServer(name: connectionName, bundleIdentifier: Bundle.main.bundleIdentifier)
 
         Log.appDelegate.info("IMKServer created successfully")
-
-        statusBarController = StatusBarController()
 
         inputSourceSwitcher = InputSourceSwitcher()
     }

@@ -63,3 +63,61 @@ extension InputController {
         Log.inputController.info("seedContextFromDocument — seeded \(text.count, privacy: .public) chars")
     }
 }
+
+// MARK: - Text Input Menu
+
+/// The menu shown under the input source in the menu bar. IMK calls `menu()` every time it
+/// draws, so the items are rebuilt from current state rather than kept in sync by hand.
+extension InputController {
+    override func menu() -> NSMenu! {
+        let menu = NSMenu()
+
+        let selected = LanguageManager.shared.selectedCode
+        let systemBase = NSSpellChecker.shared.language().baseLanguageCode
+        let effectiveCode = selected.isEmpty
+            ? (LanguageManager.shared.addedCodes.contains(systemBase) ? systemBase : "")
+            : selected
+
+        for descriptor in LanguageManager.shared.addedDescriptors {
+            let item = NSMenuItem(title: descriptor.displayName,
+                                  action: #selector(selectLanguageFromMenu(_:)),
+                                  keyEquivalent: "")
+            item.target = self
+            item.representedObject = descriptor.code
+            item.state = descriptor.code == effectiveCode ? .on : .off
+            menu.addItem(item)
+        }
+
+        menu.addItem(.separator())
+
+        let settings = SettingsManager.shared
+        let spacing = NSMenuItem(title: "Commit Without Trailing Space  (\(settings.commitSpacingHotkey.label))",
+                                 action: #selector(toggleTrailingSpaceFromMenu),
+                                 keyEquivalent: "")
+        spacing.target = self
+        spacing.state = settings.isTrailingSpaceSuppressed ? .on : .off
+        menu.addItem(spacing)
+
+        menu.addItem(.separator())
+
+        let settingsItem = NSMenuItem(title: "Settings…",
+                                      action: #selector(openSettingsFromMenu),
+                                      keyEquivalent: "")
+        settingsItem.target = self
+        menu.addItem(settingsItem)
+
+        return menu
+    }
+
+    @objc private func selectLanguageFromMenu(_ sender: NSMenuItem) {
+        LanguageManager.shared.selectLanguage(code: sender.representedObject as? String ?? "")
+    }
+
+    @objc private func toggleTrailingSpaceFromMenu() {
+        SettingsManager.shared.toggleTrailingSpaceSuppression()
+    }
+
+    @objc private func openSettingsFromMenu() {
+        SettingsWindowController.shared.showWindow()
+    }
+}

@@ -4,7 +4,7 @@ import XCTest
 /// Tests for `LanguageManager.effectiveLanguage` and `effectiveBaseCode`.
 ///
 /// These properties centralise the language resolution logic previously duplicated
-/// across SpellCheckPredictor, KenLMPredictor, InputController, and StatusBarController.
+/// across SpellCheckPredictor, KenLMPredictor, and InputController.
 @MainActor final class LanguageManagerEffectiveLanguageTests: XCTestCase {
     private var defaults: UserDefaults!
     private var manager: LanguageManager!

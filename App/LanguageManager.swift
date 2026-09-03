@@ -134,7 +134,7 @@ extension String {
     /// the resolved code has no `LanguageDescriptor` (e.g. system keyboard is French
     /// but no French descriptor exists). This guarantees the returned code always has
     /// a matching descriptor, KenLM model, and typing rules.
-    /// Used by `KenLMPredictor`, `InputController.refreshRules()`, `StatusBarController`.
+    /// Used by `KenLMPredictor` and `InputController.refreshRules()`.
     var effectiveBaseCode: String {
         if addedCodes.count == 1 { return addedCodes[0] }
         let base = effectiveLanguage.baseLanguageCode
