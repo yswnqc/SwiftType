@@ -4,8 +4,9 @@
 
 # SwiftType（fork）
 
-一个 macOS 英语输入法：打字时在光标下方浮出候选栏，提供补全、拼写纠正和下一词预测，
-全部本地运行，不联网。上游用 Swift 6 + InputMethodKit 编写，下一词预测基于 KenLM n-gram 模型。
+一个 macOS 英语输入法：打字时在光标下方浮出候选栏，提供输入建议、联想输入和拼写纠正，
+按数字键选词上屏。全部本地运行，不联网。上游用 Swift 6 + InputMethodKit 编写，
+联想输入（下一词预测）基于 KenLM n-gram 模型。
 
 ## 本 fork 的改动
 
@@ -17,7 +18,7 @@
 | 设置项 | 作用于 |
 |---|---|
 | Return Key | Return |
-| Number Keys | 数字键 1–7，含第一格原文 |
+| Number Keys | 数字键 1–7 选词，含第一格原文 |
 | Space Key | 空格键 |
 
 快捷键：**⌥+`**（同时切换空格键和数字键的提交行为），可在
